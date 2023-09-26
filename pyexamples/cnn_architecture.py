@@ -7,7 +7,6 @@ SCALE_HEIGHT = 1.0 / 2
 SCALE_WIDTH = 1/4 / 2
 SCALE_FCNN = 3/4 / 2
 
-# defined your arch
 arch = [
     to_head(".."),
     to_cor(),
@@ -19,7 +18,7 @@ arch = [
         height=SCALE_HEIGHT * 12,
         name="map",
     ),
-    to_Conv(
+    to_input_layer(
         "input",
         60,
         3,
@@ -28,7 +27,7 @@ arch = [
         height=SCALE_HEIGHT * 60,
         depth=SCALE_HEIGHT * 60,
         width=SCALE_WIDTH * 3,
-        caption="Input $\\tilde{Z}_t$",
+        caption="$\\tilde{Z}_t$",
     ),
     to_Conv(
         "conv1",
@@ -39,7 +38,6 @@ arch = [
         height=SCALE_HEIGHT * 56,
         depth=SCALE_HEIGHT * 56,
         width=SCALE_WIDTH * 32,
-        caption="Convolution 5x5 + ReLU",
     ),
     to_connection("input", "conv1"),
     to_Pool(
@@ -68,7 +66,6 @@ arch = [
         height=SCALE_HEIGHT * 12,
         depth=SCALE_HEIGHT * 12,
         width=SCALE_WIDTH * 64,
-        caption="\\begin{flushright}Max-Pool\\\\2x2\\end{flushright}",
     ),
     to_Conv(
         "conv3",
@@ -96,15 +93,16 @@ arch = [
         radius=2,
         opacity=0.6,
     ),
-    to_SoftMax(
+    to_input_layer(
         "obs",
         4,
+        0,
         offset="(-1,3,0)",
         to="(sum1-east)",
         height=1,
         depth=SCALE_FCNN * 8,
         width=1,
-        caption="Input $O_t$\\newline",
+        caption="$O_t$\\newline",
     ),
     to_connection("pool3", "sum1"),
     to_connection("obs", "sum1"),
@@ -116,20 +114,38 @@ arch = [
         height=1,
         depth=SCALE_FCNN  * 256,
         width=1,
-        caption="Extracted Features",
     ),
     to_connection("sum1", "soft1"),
+    to_Sum(
+        "sum2",
+        offset=f"({1*SCALE_WIDTH*10},0,0)",
+        to="(soft1-east)",
+        radius=2,
+        opacity=0.6,
+    ),
+    to_input_layer(
+        "action",
+        1,
+        0,
+        offset="(1,2,0)",
+        to="(sum2-east)",
+        height=1,
+        depth=SCALE_FCNN * 2,
+        width=1,
+        caption="$A_t$",
+    ),
+    to_connection("action", "sum2"),
+    to_connection("soft1", "sum2"),
     to_SoftMax(
         "soft2",
         128,
         offset=f"({1.5*SCALE_FCNN*2},0,0)",
-        to="(soft1-east)",
+        to="(sum2-east)",
         height=1,
         depth=SCALE_FCNN  * 128,
         width=1,
-        caption="Prediction Head",
     ),
-    to_connection("soft1", "soft2"),
+    to_connection("sum2", "soft2"),
     to_SoftMax(
         "soft3",
         64,
@@ -141,16 +157,76 @@ arch = [
     ),
     to_connection("soft2", "soft3"),
     to_SoftMax(
-        "soft4",
-        2,
+        "output",
+        1,
         offset=f"({1.5*SCALE_FCNN*2},0,0)",
         to="(soft3-east)",
         height=1,
         depth=SCALE_FCNN * 4,
         width=1,
-        caption="Output",# $\\mu, \\ln \\sigma$", #$\\hat{q}_{\\mathbf{\\phi}}$
+        caption="Output $\\hat{q}_{\\mathbf{\\phi}}({Z_t,A_t})$",
     ),
-    to_connection("soft3", "soft4"),
+    to_connection("soft3", "output"),
+    
+    #legend
+    to_input_layer(
+        "input_legend",
+        0,
+        0,
+        offset=f"(-8.5,-4)",
+        to="(output-east)",
+        height=1,
+        depth=1,
+        width=1,
+        caption="Input",
+    ),
+    to_Conv(
+        "conv_legend",
+        0,
+        0,
+        offset=f"(-6.5,-4)",
+        to="(output-east)",
+        height=1,
+        depth=1,
+        width=1,
+        caption="Conv 5x5 + ReLU",
+    ),
+    to_Pool(
+        "pool_legend",
+        offset="(-4.5,-4)",
+        to="(output-east)",
+        height=1,
+        depth=1,
+        width=1,
+        caption="Max-Pool 2x2"
+    ),
+    to_SoftMax(
+        "soft_legend",
+        0,
+        offset=f"(-2.5,-4)",
+        to="(output-east)",
+        height=1,
+        depth=1,
+        width=1,
+        caption="FC + ReLU", 
+    ),
+    to_SoftMax(
+        "sum_legend_caption",
+        0,
+        offset=f"(-1.1,-4)",
+        to="(output-east)",
+        height=0,
+        depth=0,
+        width=0,
+        caption="Concate-nation",
+    ),
+    to_Sum(
+        "sum_legend",
+        offset=f"(0,-4)",
+        to="(output-east)",
+        radius=1,
+        opacity=0.6,
+    ),
     to_end(),
 ]
 
