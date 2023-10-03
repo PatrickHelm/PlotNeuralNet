@@ -12,5 +12,6 @@ REM Remove auxiliary files
 REM REM Remove TeX file
 @REM del %1.tex
 ping 127.0.0.1 -n 2 > nul
+copy %1.pdf "C:\Users\patri\master-thesis\paper\images\%1.pdf"
 REM Open PDF file
 start "" %1.pdf
