@@ -1,0 +1,30 @@
+% Fully connected neural network
+% Author: Izaak Neutelings (September 2021) 
+% Adapted from https://tikz.net/neural_networks/
+
+\usepackage{neuralnetwork}
+\usepackage{amsmath} % for aligned
+\usepackage{tikz}
+\usepackage{listofitems} % for \readlist to create arrays
+\usetikzlibrary{arrows.meta} % for arrow size
+\usepackage[outline]{contour} % glow around text
+\contourlength{1.4pt}
+
+\tikzset{>=latex} % for LaTeX arrow head
+\usepackage{xcolor}
+\definecolor{orblue}{RGB}{0, 90, 169} 
+\definecolor{logred}{RGB}{185, 15, 34}
+\definecolor{tugreen}{RGB}{127, 171, 22}
+
+\tikzstyle{node}=[thick,circle,draw=orblue,minimum size=22,inner sep=0.5,outer sep=0.6]
+\tikzstyle{node in}=[node,green!20!black,draw=tugreen!30!black,fill=tugreen!30]
+\tikzstyle{node hidden}=[node,blue!20!black,draw=orblue!30!black,fill=orblue!30]
+\tikzstyle{node out}=[node,red!20!black,draw=logred!30!black,fill=logred!30]
+\tikzstyle{connect}=[thick,black] %,line cap=round
+\tikzstyle{connect arrow}=[-{Latex[length=4,width=3.5]},thick,black,shorten <=0.5,shorten >=1]
+\tikzset{ % node styles, numbered for easy mapping with \nstyle
+  node 1/.style={node in},
+  node 2/.style={node hidden},
+  node 3/.style={node out},
+}
+\def\nstyle{int(\lay<\Nnodlen?min(2,\lay):3)} % map layer number onto 1, 2, or 3
