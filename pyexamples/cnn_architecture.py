@@ -178,7 +178,7 @@ arch = [
         height=1,
         depth=1,
         width=1,
-        caption="Input",
+        caption="Input Layer",
     ),
     to_Conv(
         "conv_legend",
