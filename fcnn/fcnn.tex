@@ -21,18 +21,21 @@
                  \index=(\i<\N?int(\i):"\Nstr[\lay]");
                  \x=\lay; \n=\nstyle;}] in {0,...,\N}{ % loop over nodes
         % NODES
-        \ifnum\lay=1 % first layer
+        % \ifnum\lay=1 % first layer
+        %   \ifnum\i=0 % first node = input bias
+        %     \node[node \n] (N\lay-\i) at (\x,\y) {$1$};
+        %   \else % other nodes
+        %     \node[node \n] (N\lay-\i) at (\x,\y) {$\Cstr[\lay]_{\index}$};
+        %   \fi
+        % \else
+        \ifnum\lay=\Nnodlen % last layer
+          \ifnum\i>0 % no bias
+            \node[node \n] (N\lay-\i) at (\x,\y) {$\Cstr[\lay]_{\index}$};
+          \fi
+        \else % other layers
           \ifnum\i=0 % first node = input bias
             \node[node \n] (N\lay-\i) at (\x,\y) {$1$};
           \else % other nodes
-            \node[node \n] (N\lay-\i) at (\x,\y) {$\Cstr[\lay]_{\index}$};
-          \fi
-        \else
-          \ifnum\lay=\Nnodlen % last layer
-            \ifnum\i>0 % no bias
-              \node[node \n] (N\lay-\i) at (\x,\y) {$\Cstr[\lay]_{\index}$};
-            \fi
-          \else % other layers
             \node[node \n] (N\lay-\i) at (\x,\y) {$\Cstr[\lay]_{\index}$};
           \fi
         \fi
@@ -57,10 +60,10 @@
   \node[above=2,align=center,orblue!100] at (N3-0.90) {hidden layers};
   \node[above=10,align=center,logred!100] at (N\Nnodlen-1.90) {output\\[-0.2em]layer};
   }
-  \node[below=0,align=center,black!100] at (1.5,-2) {$\mathbf{W}^{(1)}$};
-  \node[below=0,align=center,black!100] at (2.5,-2) {$\mathbf{W}^{(2)}$};
-  \node[below=0,align=center,black!100] at (3.5,-2) {$\mathbf{W}^{(3)}$};
-  \node[below=0,align=center,black!100] at (4.5,-2) {$\mathbf{W}^{(4)}$};
+  \node[below=0,align=center,black!100] at (1.5,-2) {${W}^{(1)}$};
+  \node[below=0,align=center,black!100] at (2.5,-2) {${W}^{(2)}$};
+  \node[below=0,align=center,black!100] at (3.5,-2) {${W}^{(3)}$};
+  \node[below=0,align=center,black!100] at (4.5,-2) {${W}^{(4)}$};
   
 \end{tikzpicture}
 \end{document}
